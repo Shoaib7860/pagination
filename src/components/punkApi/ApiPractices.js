@@ -3,27 +3,22 @@ import axios from "axios";
 
 function ApiPractices(props) {
   const [data, setData] = useState([]);
-  const [filter, setFilter] = useState(1);
+  // const [filter, setFilter] = useState(1);
   const [pageNo, setPageNo] = useState(1);
   const [showData, setShowData] = useState(5);
   const [message, setMessage] = useState(false);
   const [maxValue, setMaxValue] = useState(1);
-  const [error, setError] = useState(false);
-  const [max, setMax] = useState(false);
-  const [timer, setTimer] = useState(null)
+
   const fetchData = () => {
-    if (showData > 0 && showData <= 80) {
+    if ((showData > 0 && showData <= 80) && (pageNo > 0 && pageNo <= maxValue)) {
       axios
         .get(
           `https://api.punkapi.com/v2/beers?page=${pageNo}&per_page=${showData}`
         )
         .then((res) => setData(res.data))
         .catch((err) => console.log(err));
-    } else {
-      setError(true);
     }
   };
-
 
 
   useEffect(() => {
@@ -32,23 +27,30 @@ function ApiPractices(props) {
 
   }, [showData]);
 
+
   useEffect(() => {
-    fetchData();
-  }, [filter]);
+    if (showData <= 0 && showData > 80) {
+      setMessage(true)
+      return
+    }
+    if (!showData) {
+    }
+    if ((showData > 0 && showData <= 80) && (pageNo > 0 && pageNo <= maxValue)) {
+      setMessage(false)
+      const getData = setTimeout(() =>
+        fetchData(), 2000)
+      return () => clearTimeout(getData)
 
-  const inputChange = (e) => {
-    setPageNo(e.target.value)
+    }
 
-    clearTimeout(timer)
+  }, [pageNo, showData])
 
-    const newTimer = setTimeout(() => {
-      fetchData();
-    }, 1000)
-
-    setTimer(newTimer)
-
+  const handleChange = (e) => {
+    const newValue = e.target.value;
+    setShowData(newValue);
+    setPageNo('');
   }
-  console.log(pageNo)
+
 
   return (
     <>
@@ -67,35 +69,12 @@ function ApiPractices(props) {
             max="80"
             placeholder="Show Data"
             value={showData}
-            onChange={(e) => {
-              setShowData(e.target.value);
-              if (Math.sign(e.target.value) === 1) {
-                if (!message && !error && pageNo && pageNo <= maxValue && showData && showData <= 80 && !max) {
-                  console.log("if satemene");
-                  setTimeout(() => {
-                    setFilter(showData);
-                  }, 2000);
-                }
+            onChange={handleChange}
+          // onChange={(e) => {
+          //   setShowData(e.target.value)
 
-              } else {
-                // setMessage(true);
-              }
+          // }}
 
-
-              // if (Math.sign(e.target.value) === 1) {
-              //     setMessage(false);
-              //     if (e.target.value > 80) {
-              //         setError(true);
-              //     } else {
-              //         setError(false);
-              //         setTimeout(() => {
-              //             setFilter(showData);
-              //         }, 2000);
-              //     }
-              // } else {
-              //     setMessage(true);
-              // }
-            }}
           />
         </div>
         <div className="form-group">
@@ -111,27 +90,14 @@ function ApiPractices(props) {
             max={maxValue}
             placeholder="Enter Page number"
             value={pageNo}
-            onChange={inputChange}
-          // onChange={(e) => {
-          //   setPageNo(e.target.value);
-          //   if (Math.sign(e.target.value) === 1) {
-          //     if (!message && !error && pageNo && pageNo <= maxValue && showData && showData <= 80 && !max) {
-          //       console.log("if satemene");
-          //       setTimeout(() => {
-          //         // setMax(false)
-          //         setFilter(pageNo);
-          //       }, 2000);
-          //     }
+            // onChange={inputChange}
+            onChange={(e) => {
+              setPageNo(e.target.value);
 
-          //   } else {
-          //     // setMessage(true);
-          //   }
-          // }}
+            }}
           />
-          <br />
-          {max && <span>{`PLZ ENTER 1 TO ${maxValue} number`}</span>}
-          {error && <span>PLZ ENTER 1 TO 80 NUMBER ONLY</span>}
-          {message && <span>Plz enter greater than 0 value</span>}
+
+
         </div>
       </form>
 
