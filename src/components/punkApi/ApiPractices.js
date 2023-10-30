@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "../../App.css"
 
 function ApiPractices(props) {
     const [data, setData] = useState([]);
@@ -8,6 +9,7 @@ function ApiPractices(props) {
     const [showData, setShowData] = useState(5);
     const [maxValue, setMaxValue] = useState(1);
     const [totalPage, setTotalPage] = useState(0);
+    const [pagination, setPagination] = useState([])
     const [errorMessage, setErrorMessage] = useState({
         maxValue: false,
         greaterThanZero: false,
@@ -37,6 +39,21 @@ function ApiPractices(props) {
 
     }, [showData]);
 
+    useEffect(() => {
+        const array = [];
+        if (maxValue > 0 && maxValue !== Infinity) {
+            for (let i = 1; i <= maxValue; i++) {
+                array.push(i)
+            }
+            setPagination(array)
+        } else {
+            setPagination(array)
+        }
+
+    }, [maxValue])
+
+
+
 
     useEffect(() => {
         if ((showData > 0 && showData <= 80) && (pageNo > 0 && pageNo <= maxValue)) {
@@ -60,7 +77,7 @@ function ApiPractices(props) {
     }
 
     const handleNextClick = () => {
-        if (pageNo < totalPage) {
+        if (pageNo < maxValue) {
             setPageNo(pageNo + 1)
         }
 
@@ -74,13 +91,6 @@ function ApiPractices(props) {
 
     const prevDisable = pageNo === 1;
     const nextDisable = pageNo === totalPage;
-
-    const itemsPerPage = 10;
-    const startIndex = (pageNo-1) * itemsPerPage;
-    const lastIndex = startIndex + itemsPerPage;
-    const itemToDisplay = data.slice(startIndex, lastIndex);
-
-
 
 
 
@@ -146,6 +156,23 @@ function ApiPractices(props) {
             {errorMessage.greaterThanZero && <p>Must be greater than zero</p>}
             {errorMessage.LessThanEighty && <p>Show data range is 1-80</p>}
 
+            <div className="pagination mb-3">
+                {
+                    maxValue && pagination.length > 0 && pagination.map((item) => {
+
+                        return (
+
+                            <div>
+                                <button onClick={() => handlePageChnage(item)} key={item} disabled={item === pageNo}>{item}</button>
+
+                            </div>
+                        )
+                    })
+                }
+            </div>
+
+
+
             <table className="table table-striped table-dark table-bordered">
                 <thead>
                     <tr>
@@ -167,7 +194,7 @@ function ApiPractices(props) {
                     </tr>
                 </thead>
                 <tbody>
-                    {itemToDisplay?.map((items) => (
+                    {data?.map((items) => (
                         <tr key={items.id}>
                             <th scope="row">{items.id}</th>
                             <td>{items.name}</td>
@@ -177,17 +204,7 @@ function ApiPractices(props) {
                         </tr>
                     ))}
                 </tbody>
-                {
-                        Array.from({length: totalPage}, (_,i) => {
-                            return (
-                                <div className="d-flex">
-                                     <button onClick={() => handlePageChnage(i+1)} key={i}>{i+1}</button>
 
-                                </div>
-                               
-                            )
-                        })
-                    }
             </table>
 
 
