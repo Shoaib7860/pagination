@@ -4,19 +4,17 @@ import "../../App.css"
 
 function ApiPractices(props) {
     const [data, setData] = useState([]);
-    // const [filter, setFilter] = useState(1);
     const [pageNo, setPageNo] = useState(1);
     const [showData, setShowData] = useState(5);
     const [maxValue, setMaxValue] = useState(1);
-    const [totalPage, setTotalPage] = useState(0);
-    const [pagination, setPagination] = useState([])
+    const [pagination, setPagination] = useState([]);
     const [errorMessage, setErrorMessage] = useState({
         maxValue: false,
         greaterThanZero: false,
         LessThanEighty: false,
     });
 
-    const fetchData = () => {
+    const fetchData = (pageNo) => {
         if ((showData > 0 && showData <= 80) && (pageNo > 0 && pageNo <= maxValue)) {
             axios
                 .get(
@@ -24,7 +22,6 @@ function ApiPractices(props) {
                 )
                 .then((res) => {
                     setData(res.data)
-                    setTotalPage(Math.ceil(res.data.length / 10))
                 })
 
                 .catch((err) => console.log(err));
@@ -58,12 +55,10 @@ function ApiPractices(props) {
     useEffect(() => {
         if ((showData > 0 && showData <= 80) && (pageNo > 0 && pageNo <= maxValue)) {
             const getData = setTimeout(() =>
-                fetchData(), 2000)
+                fetchData(pageNo), 2000)
             return () => clearTimeout(getData)
-
         }
-
-    }, [pageNo, showData])
+    }, [showData])
 
     const handleChange = (e) => {
         const newValue = e.target.value;
@@ -72,25 +67,26 @@ function ApiPractices(props) {
     }
 
     const handlePageChnage = (newPage) => {
-        setPageNo(newPage)
+        setPageNo(newPage);
+        fetchData(newPage);
 
     }
 
-    const handleNextClick = () => {
-        if (pageNo < maxValue) {
-            setPageNo(pageNo + 1)
-        }
+    // const handleNextClick = () => {
+    //     if (pageNo < maxValue) {
+    //         setPageNo(pageNo + 1)
+    //     }
 
-    }
-    const handlePrevClick = () => {
-        if (pageNo > 1) {
-            setPageNo(pageNo - 1)
-        }
+    // }
+    // const handlePrevClick = () => {
+    //     if (pageNo > 1) {
+    //         setPageNo(pageNo - 1)
+    //     }
 
-    }
+    // }
 
-    const prevDisable = pageNo === 1;
-    const nextDisable = pageNo === totalPage;
+    // const prevDisable = pageNo === 1;
+    // const nextDisable = pageNo === totalPage;
 
 
 
