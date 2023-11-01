@@ -88,14 +88,9 @@ function ApiPractices(props) {
     // const prevDisable = pageNo === 1;
     // const nextDisable = pageNo === totalPage;
 
-    function well(n){
-        return 5;
 
-    }
 
-    well(3);
 
-   
 
 
 
@@ -151,7 +146,7 @@ function ApiPractices(props) {
                             } else {
                                 setErrorMessage({ ...errorMessage, maxValue: false })
                             }
-                            if ((showData > 0 && showData <= 80) && (pageNo > 0 && pageNo <= maxValue)) {
+                            if ((showData > 0 && showData <= 80) && (e.target.value > 0 && e.target.value <= maxValue)) {
                                 const getData = setTimeout(() =>
                                     fetchData(e.target.value), 2000)
                                 return () => clearTimeout(getData)
@@ -159,7 +154,6 @@ function ApiPractices(props) {
 
                         }}
                     />
-
                 </div>
             </form>
 
@@ -169,7 +163,7 @@ function ApiPractices(props) {
 
             <div className="pagination mb-3">
                 {
-                    maxValue && pagination.length > 0 && pagination.map((item,i) => {
+                    maxValue && pagination.length > 0 && pagination.map((item, i) => {
 
                         return (
 
