@@ -88,6 +88,15 @@ function ApiPractices(props) {
     // const prevDisable = pageNo === 1;
     // const nextDisable = pageNo === totalPage;
 
+    function well(n){
+        return 5;
+
+    }
+
+    well(3);
+
+   
+
 
 
 
@@ -115,6 +124,7 @@ function ApiPractices(props) {
                             } else {
                                 setErrorMessage({ ...errorMessage, LessThanEighty: false })
                             }
+
                         }}
                     />
                     <br />
@@ -141,6 +151,11 @@ function ApiPractices(props) {
                             } else {
                                 setErrorMessage({ ...errorMessage, maxValue: false })
                             }
+                            if ((showData > 0 && showData <= 80) && (pageNo > 0 && pageNo <= maxValue)) {
+                                const getData = setTimeout(() =>
+                                    fetchData(e.target.value), 2000)
+                                return () => clearTimeout(getData)
+                            }
 
                         }}
                     />
@@ -154,11 +169,11 @@ function ApiPractices(props) {
 
             <div className="pagination mb-3">
                 {
-                    maxValue && pagination.length > 0 && pagination.map((item) => {
+                    maxValue && pagination.length > 0 && pagination.map((item,i) => {
 
                         return (
 
-                            <div>
+                            <div key={`shoaib${i}`}>
                                 <button onClick={() => handlePageChnage(item)} key={item} disabled={item === pageNo}>{item}</button>
 
                             </div>
